@@ -100,19 +100,19 @@ const ViewCreator = () => {
         </div>
 
         <div className="view-actions">
-          <Link to={`/edit/${creator.id}`} className="btn-primary" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Link to={`/edit/${creator.id}`} className="btn-primary small-btn" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
             ✏️ Edit Creator
           </Link>
           <button
-            className="btn-danger"
+            className="btn-danger small-btn"
             onClick={handleDelete}
             disabled={deleting}
           >
             {deleting ? 'Deleting...' : '🗑 Delete Creator'}
           </button>
-          <Link to="/" className="btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button className="btn-secondary small-btn" onClick={() => navigate('/')}>
             ← Back to Home
-          </Link>
+          </button>
         </div>
       </div>
     </div>

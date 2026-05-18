@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../client';
 
 const EditCreator = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     url: '',
@@ -39,14 +42,14 @@ const EditCreator = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+    setError(null);
+
     const { error } = await supabase
       .from('creators')
       .update(formData)
@@ -54,14 +57,16 @@ const EditCreator = () => {
 
     if (error) {
       console.error('Error updating creator:', error);
-      alert('Error updating creator. Check console for details.');
+      setError('Failed to save changes. Please try again.');
+      setSubmitting(false);
     } else {
       navigate(`/creator/${id}`);
     }
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this creator?')) {
+    if (window.confirm(`Delete "${formData.name}"? This cannot be undone.`)) {
+      setDeleting(true);
       const { error } = await supabase
         .from('creators')
         .delete()
@@ -69,46 +74,129 @@ const EditCreator = () => {
 
       if (error) {
         console.error('Error deleting creator:', error);
+        setDeleting(false);
       } else {
         navigate('/');
       }
     }
   };
 
-  if (loading) return <div className="loading">Loading creator details...</div>;
+  if (loading) {
+    return (
+      <div className="add-page">
+        <div className="status-message">LOADING...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container" style={{ maxWidth: '600px', paddingTop: '2rem' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '2rem', color: '#c084fc' }}>Edit Creator</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="name">
-          Name
-          <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required />
-        </label>
-        
-        <label htmlFor="url">
-          URL (Channel or Page link)
-          <input type="url" id="url" name="url" value={formData.url} onChange={handleChange} required />
-        </label>
-        
-        <label htmlFor="description">
-          Description
-          <textarea id="description" name="description" value={formData.description} onChange={handleChange} required rows="4"></textarea>
-        </label>
-
-        <label htmlFor="imageURL">
-          Image URL (Optional)
-          <input type="url" id="imageURL" name="imageURL" value={formData.imageURL} onChange={handleChange} />
-        </label>
-
-        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-          <button type="submit">Update Creator</button>
-          <button type="button" className="danger-button" onClick={handleDelete}>Delete Creator</button>
+    <div className="add-page">
+      {/* Header with image preview */}
+      <div className="edit-page-header">
+        <div
+          className="edit-avatar-preview"
+          style={formData.imageURL ? { backgroundImage: `url(${formData.imageURL})` } : {}}
+        >
+          {!formData.imageURL && (
+            <span className="edit-avatar-letter">
+              {formData.name ? formData.name.charAt(0).toUpperCase() : '?'}
+            </span>
+          )}
+          <div className="edit-avatar-overlay" />
         </div>
-        <div style={{ marginTop: '1rem' }}>
-          <Link to={`/creator/${id}`} role="button" className="secondary-button" style={{ width: '100%', textAlign: 'center' }}>Cancel</Link>
+
+        <div className="edit-header-text">
+          <p className="add-page-subtitle">Editing</p>
+          <h1 className="add-page-title">{formData.name || 'Creator'}</h1>
         </div>
-      </form>
+      </div>
+
+      <div className="add-page-body">
+        <form onSubmit={handleSubmit} className="creator-form">
+          {error && <p className="form-error">{error}</p>}
+
+          <div className="form-group">
+            <label htmlFor="name">Name *</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="e.g. MrBeast"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="url">Channel / Page URL *</label>
+            <input
+              type="url"
+              id="url"
+              name="url"
+              placeholder="https://youtube.com/..."
+              value={formData.url}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="description">Description *</label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="What do they create?"
+              value={formData.description}
+              onChange={handleChange}
+              required
+              rows="4"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="imageURL">
+              Image URL <span className="optional">(optional)</span>
+            </label>
+            <input
+              type="url"
+              id="imageURL"
+              name="imageURL"
+              placeholder="https://example.com/image.jpg"
+              value={formData.imageURL}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Primary actions */}
+          <div className="form-actions form-actions--compact">
+            <button type="submit" className="btn-primary" disabled={submitting || deleting}>
+              {submitting ? 'Saving...' : '✓ Save Changes'}
+            </button>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => navigate(`/creator/${id}`)}
+              disabled={submitting || deleting}
+            >
+              Cancel
+            </button>
+          </div>
+
+          {/* Danger zone */}
+          <div className="edit-danger-zone">
+            <p className="danger-zone-label">Danger Zone</p>
+            <button
+              type="button"
+              className="btn-danger btn-danger-full"
+              onClick={handleDelete}
+              disabled={submitting || deleting}
+            >
+              {deleting ? 'Deleting...' : '🗑 Delete This Creator'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
