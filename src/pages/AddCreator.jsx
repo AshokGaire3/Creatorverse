@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../client';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const AddCreator = () => {
   const navigate = useNavigate();
@@ -10,6 +10,8 @@ const AddCreator = () => {
     description: '',
     imageURL: ''
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,47 +23,94 @@ const AddCreator = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabase
+    setSubmitting(true);
+    setError(null);
+
+    const { error } = await supabase
       .from('creators')
       .insert([formData]);
 
     if (error) {
       console.error('Error adding creator:', error);
-      alert('Error adding creator. Check console for details.');
+      setError('Failed to add creator. Please try again.');
+      setSubmitting(false);
     } else {
       navigate('/');
     }
   };
 
   return (
-    <div className="container" style={{ maxWidth: '600px', paddingTop: '2rem' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '2rem', color: '#c084fc' }}>Add a New Creator</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="name">
-          Name
-          <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required />
-        </label>
-        
-        <label htmlFor="url">
-          URL (Channel or Page link)
-          <input type="url" id="url" name="url" value={formData.url} onChange={handleChange} required />
-        </label>
-        
-        <label htmlFor="description">
-          Description
-          <textarea id="description" name="description" value={formData.description} onChange={handleChange} required rows="4"></textarea>
-        </label>
+    <div className="add-page">
+      <div className="add-page-header">
+        <h1 className="add-page-title">ADD A CREATOR</h1>
+        <p className="add-page-subtitle">Expand the Creatorverse</p>
+      </div>
 
-        <label htmlFor="imageURL">
-          Image URL (Optional)
-          <input type="url" id="imageURL" name="imageURL" value={formData.imageURL} onChange={handleChange} />
-        </label>
+      <div className="add-page-body">
+        <form onSubmit={handleSubmit} className="creator-form">
+          {error && <p className="form-error">{error}</p>}
 
-        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-          <button type="submit">Add Creator</button>
-          <Link to="/" role="button" className="secondary-button" style={{ width: '100%', textAlign: 'center' }}>Cancel</Link>
-        </div>
-      </form>
+          <div className="form-group">
+            <label htmlFor="name">Name *</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="e.g. MrBeast"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="url">Channel / Page URL *</label>
+            <input
+              type="url"
+              id="url"
+              name="url"
+              placeholder="https://youtube.com/..."
+              value={formData.url}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="description">Description *</label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="What do they create?"
+              value={formData.description}
+              onChange={handleChange}
+              required
+              rows="4"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="imageURL">Image URL <span className="optional">(optional)</span></label>
+            <input
+              type="url"
+              id="imageURL"
+              name="imageURL"
+              placeholder="https://example.com/image.jpg"
+              value={formData.imageURL}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="form-actions">
+            <button type="submit" className="btn-primary" disabled={submitting}>
+              {submitting ? 'Adding...' : 'Add Creator'}
+            </button>
+            <button type="button" className="btn-secondary" onClick={() => navigate('/')}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
