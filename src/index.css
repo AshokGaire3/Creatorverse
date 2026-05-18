@@ -711,3 +711,106 @@ a[role="button"] {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ========================
+   EDIT PAGE
+======================== */
+.edit-page-header {
+  width: 100%;
+  max-width: 580px;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.edit-avatar-preview {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #0d2a4a, #1a3a6a);
+  border: 2px solid rgba(58, 123, 213, 0.4);
+  box-shadow: 0 0 30px rgba(58, 123, 213, 0.2);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-avatar-letter {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: rgba(58, 123, 213, 0.7);
+  position: relative;
+  z-index: 1;
+}
+
+.edit-avatar-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+}
+
+.edit-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.edit-header-text .add-page-title {
+  margin: 0;
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  letter-spacing: 0.05em;
+}
+
+/* Danger zone */
+.edit-danger-zone {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(200, 40, 40, 0.2);
+}
+
+.danger-zone-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(239, 68, 68, 0.6);
+  margin: 0 0 0.75rem;
+}
+
+/* Compact buttons for edit page */
+.form-actions--compact {
+  justify-content: flex-start;
+}
+
+.form-actions--compact .btn-primary,
+.form-actions--compact .btn-secondary {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.78rem;
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
+}
+
+/* Small button utility */
+.small-btn {
+  padding: 0.5rem 1.1rem !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.05em !important;
+}
+
+.btn-danger-full {
+  width: 100%;
+  padding: 0.85rem 1.5rem;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+}
