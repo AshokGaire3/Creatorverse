@@ -34,21 +34,18 @@ The following **stretch** features are implemented:
 
 ## Video Walkthrough
 
-Here's a walkthrough of implemented user stories:
+Here's a video walkthrough of the implemented user stories:
+[Video Walkthrough](https://youtu.be/l4VualJFrBE)
 
-<img src='[INSERT_VIDEO_URL_OR_GIF_PATH_HERE]' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+## Demo
 
-<!-- Replace this with whatever GIF tool you used! -->
-GIF created with ...
-<!-- Recommended tools:
-[LiceCap](https://www.cockos.com/licecap/)
-[Kap](https://getkap.co/) for macOS
-[ScreenToGif](https://www.screentogif.com/) for Windows
-[peek](https://github.com/phw/peek) for Linux. -->
+Here's a screenshot of the application:
+
+![Demo Picture](public/demo.png)
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+The main challenges I encountered while building the app were getting the Supabase client configured properly to handle the CRUD operations efficiently, and setting up the routes with React Router so that the user flow from adding a creator to viewing their details felt seamless. I also focused heavily on styling the cards to make the interface look modern and visually appealing.
 
 ## License
 
